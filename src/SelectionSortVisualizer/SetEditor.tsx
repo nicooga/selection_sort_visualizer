@@ -1,40 +1,42 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import ElementInput from './ElementInput';
 import NForm from './NForm';
 
-const DEFAULT_N = 10;
+const DEFAULT_N = 3;
 
 type Props = {
   onChange: (set: number[]) => void
 };
 
 export default function SetEditor(props: Props): React.ReactElement {
-  const [N, setN] = useState<number>(10);
+  const [N, setN] = useState<number>(DEFAULT_N);
   const [set, setSet] = useState<number[]>(randomPermutation(N));
 
   const onNChange = useCallback((n: number) => {
-    alert(n);
-
-    if (n < set.length) {
+    if (n < set.length)
       setSet(randomPermutation(n));
-    } else if (n > set.length) {
-      const prevSet = set.slice(0, set.length);
-      const extraSet = randomPermutation(set.length, n);
 
-      console.log({ prevSet, extraSet });
-
-      const newSet = [...prevSet, ...extraSet]
-
-      console.log({ newSet });
-
-      setSet(newSet);
-    }
+    else if (n > set.length)
+      setSet([
+        ...set.slice(0, set.length),
+        ...randomPermutation(set.length, n)
+      ]);
 
     setN(n);
   }, [set, setSet, N]);
 
-  const onElementChange = useCallback((ev: React.ChangeEvent, index: number ) => {
+  const onElementChange = useCallback((index: number, newValue: number) =>
+    setSet(set => {
+      const currentValue = set[index];
+      const newSet = [...set];
 
-  }, []);
+      newSet[newSet.findIndex(el => el == newValue)] = currentValue;
+      newSet[index] = newValue;
+
+      return newSet;
+    }),
+    []
+  );
 
   const useRandomPermutation = useCallback(() => setSet(randomPermutation(N)), [N]);
 
@@ -50,11 +52,11 @@ export default function SetEditor(props: Props): React.ReactElement {
       </button>
 
       {set.map((el, index) => (
-        <input
-          key={index}
-          type="number"
-          value={el}
-          onChange={(ev) => onElementChange(ev, index)}
+        <ElementInput
+          key={`${index}-${el}`}
+          onChange={el => onElementChange(index, el)}
+          value={set[index]}
+          max={N}
         />
       ))}
     </div>

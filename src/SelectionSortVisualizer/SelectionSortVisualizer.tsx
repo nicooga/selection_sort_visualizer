@@ -10,5 +10,5 @@ export default function SelectionSortVisualizer(): React.ReactElement {
       <SetEditor onChange={setSet} />
       <Visualizer set={set} />
     </div>
-  )
+  );
 }
