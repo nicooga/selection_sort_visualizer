@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
+import { TextField } from "@material-ui/core";
+import { SerializedStyles } from '@emotion/react';
 
 type Props = {
   onChange: (el: number) => void;
   value: number;
-  max: number
+  max: number;
 };
 
 export default function ElementInput(props: Props): React.ReactElement {
@@ -25,13 +27,15 @@ export default function ElementInput(props: Props): React.ReactElement {
   const onBlur = useCallback(() => setDisplayValue(value), []);
 
   return (
-    <input
+    <TextField
       type="number"
       value={displayValue}
       onChange={onChange}
       onBlur={onBlur}
-      min="1"
-      max={props.max}
+      inputProps={{
+        min: 1,
+        max: props.max
+      }}
     />
   );
 }

@@ -1,21 +1,27 @@
-import React, { useCallback, useMemo, useState } from 'react';
+/** @jsx jsx */
+import { css, jsx } from '@emotion/react';
+
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from "@material-ui/core";
+
 import ElementInput from './ElementInput';
 import NForm from './NForm';
 
-const DEFAULT_N = 3;
+const DEFAULT_N = 5;
 
 type Props = {
-  onChange: (set: number[]) => void
+  onChange: (set: VisualizableSet) => void;
 };
 
 export default function SetEditor(props: Props): React.ReactElement {
   const [N, setN] = useState<number>(DEFAULT_N);
-  const [set, setSet] = useState<number[]>(randomPermutation(N));
+  const [set, setSet] = useState<VisualizableSet>(randomPermutation(N));
+
+  useEffect(() => { props.onChange(set); }, [set])
 
   const onNChange = useCallback((n: number) => {
     if (n < set.length)
       setSet(randomPermutation(n));
-
     else if (n > set.length)
       setSet([
         ...set.slice(0, set.length),
@@ -26,7 +32,7 @@ export default function SetEditor(props: Props): React.ReactElement {
   }, [set, setSet, N]);
 
   const onElementChange = useCallback((index: number, newValue: number) =>
-    setSet(set => {
+    setSet((set: VisualizableSet) => {
       const currentValue = set[index];
       const newSet = [...set];
 
@@ -38,27 +44,36 @@ export default function SetEditor(props: Props): React.ReactElement {
     []
   );
 
-  const useRandomPermutation = useCallback(() => setSet(randomPermutation(N)), [N]);
+  const randomize = useCallback(() => setSet(randomPermutation(N)), [N]);
 
   return (
-    <div>
+    <div css={css`
+      display: flex;
+      flex-direction: column;
+    `}>
       <NForm
         onChange={onNChange}
         default={DEFAULT_N}
       />
 
-      <button onClick={useRandomPermutation}>
-        Use Random Permutation
-      </button>
+      <Button onClick={randomize} variant='contained'>
+        Randomize
+      </Button>
 
-      {set.map((el, index) => (
-        <ElementInput
-          key={`${index}-${el}`}
-          onChange={el => onElementChange(index, el)}
-          value={set[index]}
-          max={N}
-        />
-      ))}
+      <div css={css`display: flex;`}>
+        {set.map((el, index) => (
+          <div
+            css={css`flex-grow: 1`}
+            key={`${index}-${el}`}
+          >
+            <ElementInput
+              onChange={el => onElementChange(index, el)}
+              value={set[index]}
+              max={N}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

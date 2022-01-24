@@ -1,4 +1,8 @@
+/** @jsx jsx */
+import { css, jsx } from '@emotion/react';
+
 import React, { useCallback, useState } from 'react';
+import { TextField, Button } from "@material-ui/core";
 
 type Props = {
   onChange: (n: number) => void,
@@ -19,18 +23,23 @@ export default function NForm(props: Props): React.ReactElement {
   }, [setN]);
 
   return (
-    <form onSubmit={onSubmit}>
-      <label htmlFor='N'>N: </label>
-
-      <input
-        id='N'
+    <form onSubmit={onSubmit} css={css`
+      display: flex;
+      align-items: end;
+    `}>
+      <TextField
+        label="N"
         type='number'
         value={N}
         onChange={onChange}
-        min="1"
+        inputProps={{ min: 1}}
       />
 
-      <input type='submit' value='Set N' />
+      <Button
+        type='submit'
+        variant='contained'
+        css={css`margin-left: 8px;`}
+      >Set N</Button>
     </form>
   );
 }
