@@ -6,6 +6,7 @@ type Props = {
   onChange: (el: number) => void;
   value: number;
   max: number;
+  label: string | number;
 };
 
 export default function ElementInput(props: Props): React.ReactElement {
@@ -36,6 +37,9 @@ export default function ElementInput(props: Props): React.ReactElement {
         min: 1,
         max: props.max
       }}
+      variant="outlined"
+      size="small"
+      label={String(props.label)}
     />
   );
 }

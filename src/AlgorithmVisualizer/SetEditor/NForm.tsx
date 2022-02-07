@@ -26,6 +26,7 @@ export default function NForm(props: Props): React.ReactElement {
     <form onSubmit={onSubmit} css={css`
       display: flex;
       align-items: end;
+      margin: 0;
     `}>
       <TextField
         label="N"
@@ -33,13 +34,18 @@ export default function NForm(props: Props): React.ReactElement {
         value={N}
         onChange={onChange}
         inputProps={{ min: 1}}
+        variant="outlined"
+        size="small"
       />
 
       <Button
         type='submit'
         variant='contained'
-        css={css`margin-left: 8px;`}
-      >Set N</Button>
+        size="small"
+        css={css`margin-left: 8px !important;`}
+      >
+        Set N
+      </Button>
     </form>
   );
 }

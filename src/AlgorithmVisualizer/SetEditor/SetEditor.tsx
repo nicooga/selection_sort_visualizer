@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Button } from "@material-ui/core";
 
 import ElementInput from './ElementInput';
 import NForm from './NForm';
 
-const DEFAULT_N = 5;
+const DEFAULT_N = 10;
 
 type Props = {
   onChange: (set: VisualizableSet) => void;
@@ -16,8 +16,6 @@ type Props = {
 export default function SetEditor(props: Props): React.ReactElement {
   const [N, setN] = useState<number>(DEFAULT_N);
   const [set, setSet] = useState<VisualizableSet>(randomPermutation(N));
-
-  useEffect(() => { props.onChange(set); }, [set])
 
   const onNChange = useCallback((n: number) => {
     if (n < set.length)
@@ -46,30 +44,57 @@ export default function SetEditor(props: Props): React.ReactElement {
 
   const randomize = useCallback(() => setSet(randomPermutation(N)), [N]);
 
+  const onSubmit = useCallback(() => props.onChange([...set]), [set]);
+
   return (
     <div css={css`
       display: flex;
       flex-direction: column;
     `}>
-      <NForm
-        onChange={onNChange}
-        default={DEFAULT_N}
-      />
+      <div
+        css={css`
+          display: flex;
+          align-items: end;
+          padding: 16px 0;
+        `}
+      >
+        <NForm
+          onChange={onNChange}
+          default={DEFAULT_N}
+        />
 
-      <Button onClick={randomize} variant='contained'>
-        Randomize
-      </Button>
+        <span css={css`flex-grow: 1;`} />
 
-      <div css={css`display: flex;`}>
+        <Button
+          onClick={randomize}
+          variant='contained'
+          size="small"
+        >
+          Randomize
+        </Button>
+
+        <Button
+          onClick={onSubmit}
+          variant='contained'
+          color="primary"
+          size="small"
+          css={css`margin-left: 8px !important;`}
+        >
+          Visualize
+        </Button>
+      </div>
+
+      <div css={css`display: flex; justify-content: center;`}>
         {set.map((el, index) => (
           <div
-            css={css`flex-grow: 1`}
             key={`${index}-${el}`}
+            css={css`&:not(:first-of-type) { margin-left: 8px; }`}
           >
             <ElementInput
               onChange={el => onElementChange(index, el)}
               value={set[index]}
               max={N}
+              label={index+1}
             />
           </div>
         ))}
